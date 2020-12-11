@@ -11,7 +11,8 @@ AS
 			@User varchar(25) = (SELECT USER_NAME()),
 			@ProcName varchar(20) = 'GN_Clients',
 			@ErrorMessege varchar(25),
-			@CountRows int
+			@CountRows int,
+			@InsertedRows int
 
 			EXEC dbo.OperationRuns @OperationName = @OperationName,
 								  @Description = @Description,
@@ -26,12 +27,14 @@ AS
 				Street varchar(50),
 				)
 				BULK INSERT #StagingTable 
-				FROM 'C:\Users\ikozlov\source\repos\Online_Shop1\Online_Shop1\CSV\Clients_Address.csv'
+				FROM 'C:\Users\ikozlov\source\repos\Online_Shop\Online_Shop\CSV\Clients_Address.csv'
 				WITH (FIRSTROW = 1,
 				  FIELDTERMINATOR = ',',
 				  ROWTERMINATOR='\n'
 				  );
-	
+ 
+				Set @InsertedRows = @@ROWCOUNT 
+
 				INSERT INTO Master.Address(City,Street)
 				SELECT City,Street FROM #StagingTable
 
@@ -41,10 +44,9 @@ AS
 				SELECT FirstName,LastName,Email,Phone, ABS(CHECKSUM(NEWID()) % @CountRows) + 1 as AddressId 
 				FROM #StagingTable
 		
-				UPDATE Log.OperationRuns
-				SET EndTime = (SELECT GETDATE()),
-			        STATUS = 'Successfully'
-				WHERE id = (SELECT Max(id) FROM Log.OperationRuns)
+				EXEC OperationRunsUpdate  @InsertedRows = @InsertedRows
+
+
 		END TRY
 			BEGIN CATCH
 		   INSERT INTO Log.ErrorLog(ErrorNumber,ErrorSeverty,ErrorState,ErrorProc,ErrorLine,ErrorMessege,EventLogId)

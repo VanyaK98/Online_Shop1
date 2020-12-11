@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[GN_Orders]
- AS
+AS
 	BEGIN 
 	 BEGIN TRY
 		DECLARE 
@@ -13,7 +13,8 @@
 		@ToDate date = '2020-12-06',
 		@CountOrders int = 5000,
 		@OrderId int,
-		@EndVersion int
+		@EndVersion int,
+		@InsertedRows int = 0
 
 
 		EXEC dbo.OperationRuns 
@@ -52,13 +53,12 @@
 											FROM master.DetailOrders
 											where ID =(SELECT Ident_current('master.DetailOrders')))
 			        SET @CountOrders -=1
+					SET @InsertedRows +=1
+
 			END
 
 
-			UPDATE Log.OperationRuns
-			SET EndTime = (SELECT GETDATE()),
-			STATUS = 'Successfully'
-			WHERE id = (SELECT Max(id) FROM Log.OperationRuns)
+				EXEC OperationRunsUpdate  @InsertedRows = @InsertedRows
 
 		 END TRY
 					
