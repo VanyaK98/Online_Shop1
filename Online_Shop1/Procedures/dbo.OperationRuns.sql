@@ -2,6 +2,8 @@
 @OperationName varchar(50),
 	@Description varchar(50),
 	@ProcName varchar(20)
+	
+	
 	AS
 		BEGIN
 			DECLARE 
@@ -19,5 +21,6 @@
 				INSERT INTO Log.EventLog([User],ProcName,OperationRunId)
 					VALUES (@User,@ProcName,(SELECT Ident_current('Log.OperationRuns')))
 		
+		     	
 		END
 GO

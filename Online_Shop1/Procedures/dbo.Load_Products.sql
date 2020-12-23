@@ -59,7 +59,7 @@ BEGIN TRY
 					END
 
 				  ELSE
-					SET @StartVersion = (SELECT ID FROM Config.Version WHERE CreatedDate = @date)
+					SET @StartVersion = (SELECT TOP 1 ID FROM Config.Version WHERE CreatedDate = @date)
 
 				INSERT INTO Master.Warehouse(ProductsID,ConfigurationModelId,ReceivingDate,StartVersion, Price)
 				VALUES ((SELECT Ident_current('Master.Products')),(SELECT Ident_current('Master.ConfigurationModels')),@date,@StartVersion,@Price)

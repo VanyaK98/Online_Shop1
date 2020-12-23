@@ -26,7 +26,7 @@ BEGIN TRY
 								  @Description = @Description,
 								  @ProcName = @ProcName
 
-	CREATE TABLE #StagingTable (
+	CREATE TABLE ##StagingTable (
 	Name varchar(20),
 	Type varchar(20),
 	Weight varchar(20),
@@ -39,24 +39,20 @@ BEGIN TRY
 	Price money
 	)
 
-	BULK INSERT #StagingTable 
-	FROM 'C:\Users\ikozlov\source\repos\Online_Shop\Online_Shop\CSV\Сharacteristics.csv'
-	WITH (FIRSTROW = 2,
-				  FIELDTERMINATOR = ',',
-				  ROWTERMINATOR='\n'
-				  );
-	BULK INSERT #StagingTable 
-	FROM 'C:\Users\ikozlov\source\repos\Online_Shop\Online_Shop\CSV\СharacteristicsIPad.csv'
-	WITH (FIRSTROW = 2,
-				  FIELDTERMINATOR = ',',
-				  ROWTERMINATOR='\n'
-				  );
-
-	DELETE  FROM #StagingTable 
+	DECLARE @bcp_cmd4 VARCHAR(1000);
+				DECLARE @exe_path4 VARCHAR(200) = 
+				  'call "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\';
+				SET @bcp_cmd4 =  @exe_path4 +
+				   'BCP.EXE" [tempdb].[##StagingTable] in C:\temp\Сharacteristics.csv -T -c -S LV4477\MSSQLSERVER19 -U SOFTSERVE\ikozlov -t "," ';
+				PRINT @bcp_cmd4;
+				EXEC master..xp_cmdshell @bcp_cmd4;
+	
+				
+	DELETE  FROM ##StagingTable 
 	WHERE Name + Type + Weight + BatteryCapacity +
 	Processor + MemoryCapacity + Color  + ScreenDiagonal is null 
 
-	DECLARE Cursor1 Cursor LOCAL READ_ONLY FASt_FORWARD FOR SELECT * FROM #StagingTable
+	DECLARE Cursor1 Cursor LOCAL READ_ONLY FASt_FORWARD FOR SELECT * FROM ##StagingTable
 	OPEN Cursor1
 
 	FETCH NEXT FROM Cursor1 
@@ -113,12 +109,12 @@ BEGIN TRY
 			 EXEC  dbo.ErrorLog
 				 	Close Cursor1 
 					DEALLOCATE  Cursor1
-					DROP TABLE #StagingTable 
+					DROP TABLE ##StagingTable 
 			END CATCH  
 
 
 	Close Cursor1 
 	DEALLOCATE  Cursor1
-	DROP TABLE #StagingTable 
+	DROP TABLE ##StagingTable 
 END
 GO

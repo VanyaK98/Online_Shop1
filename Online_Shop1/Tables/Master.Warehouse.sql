@@ -5,8 +5,7 @@
     [ReceivingDate]        DATE  NULL,
     [StartVersion]         INT   NULL,
     [EndVersion]           INT   DEFAULT ((999999999)) NULL,
-    [Price]                MONEY NULL,
-    [InStock]              BIT   DEFAULT ((1)) NULL,
+    [Price]                MONEY NULL
     CONSTRAINT [PK_Master_Warehouse] PRIMARY KEY CLUSTERED ([ID] ASC),
     CONSTRAINT [FK_C_Version_Warehouse] FOREIGN KEY ([StartVersion]) REFERENCES [Config].[Version] ([Id]),
     CONSTRAINT [FK_G_Products_Warehouse] FOREIGN KEY ([ProductsID]) REFERENCES [Master].[Products] ([ID]),

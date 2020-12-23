@@ -18,7 +18,7 @@ AS
 								  @Description = @Description,
 								  @ProcName = @ProcName
 	
-			CREATE TABLE #StagingTable (
+			CREATE TABLE ##StagingTable (
 				FirstName varchar(50),
 				LastName varchar(50),
 				Email varchar(100),
@@ -26,23 +26,24 @@ AS
 				City varchar(50),
 				Street varchar(50),
 				)
-				BULK INSERT #StagingTable 
-				FROM 'C:\Users\ikozlov\source\repos\Online_Shop\Online_Shop\CSV\Clients_Address.csv'
-				WITH (FIRSTROW = 1,
-				  FIELDTERMINATOR = ',',
-				  ROWTERMINATOR='\n'
-				  );
+				DECLARE @bcp_cmd4 VARCHAR(1000);
+				DECLARE @exe_path4 VARCHAR(200) = 
+				  'call "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\';
+				SET @bcp_cmd4 =  @exe_path4 +
+				   'BCP.EXE" [tempdb].[##StagingTable] in C:\temp\Clients_Address.csv -T -c -S LV4477\MSSQLSERVER19 -U SOFTSERVE\ikozlov -t "," ';
+				PRINT @bcp_cmd4;
+				EXEC master..xp_cmdshell @bcp_cmd4;
  
 				Set @InsertedRows = @@ROWCOUNT 
 
 				INSERT INTO Master.Address(City,Street)
-				SELECT City,Street FROM #StagingTable
+				SELECT City,Street FROM ##StagingTable
 
 				SET @CountRows = (SELECT COUNT(*) FROM Master.Address)
 
 				INSERT INTO Master.Clients(FirstName,LastName,Email,Phone,AddressId)
 				SELECT FirstName,LastName,Email,Phone, ABS(CHECKSUM(NEWID()) % @CountRows) + 1 as AddressId 
-				FROM #StagingTable
+				FROM ##StagingTable
 		
 				EXEC OperationRunsUpdate  @InsertedRows = @InsertedRows
 
@@ -59,8 +60,8 @@ AS
 			 ERROR_MESSAGE() AS ErrorMessage,
 			 (SELECT Ident_current('Log.EventLog'))
 			 EXEC  dbo.ErrorLog
-			  DROP Table #StagingTable
+			  DROP Table ##StagingTable
 			END CATCH  
- DROP Table #StagingTable
+ DROP Table ##StagingTable
 	END
 GO
