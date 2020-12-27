@@ -95,6 +95,7 @@
     <Build Include="Procedures\dbo.AddNewProduct.sql" />
     <Build Include="Procedures\dbo.OperationRunsUpdate.sql" />
     <Build Include="Procedures\dbo.Load_Products.sql" />
+    <Build Include="Procedures\dbo.PriceChanges.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script\Script.PostDeployment1.sql" />

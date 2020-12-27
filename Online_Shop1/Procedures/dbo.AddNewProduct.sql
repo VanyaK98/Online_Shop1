@@ -30,21 +30,17 @@
 			INSERT master.ConfigurationModels(Weight,BatteryCapacity,MemoryCapacity,Processor,ScreenDiagonal,Color)
 						values(@Weight,@BatteryCapacity,@MemoryCapacity,@Processor,@ScreenDiagonal,@Color)
 
-			INSERT INTO Master.VersionTypes(CreatedDate)
-							VALUES(@Date)
+			
 
-			INSERT INTO Master.Version(CurrentVersion,RunID,VersionTypeID)
-			VALUES((SELECT Ident_current('Master.VersionTypes')+ 10000),(SELECT Ident_current('Log.OperationRuns')),(SELECT Ident_current('Master.VersionTypes')))
+			INSERT INTO Config.Version(CreatedDate,RunID)
+			VALUES(@Date,(SELECT Ident_current('Log.OperationRuns')))
 
-			SET @StartVersion = (SELECT CurrentVersion  FROM Master.Version WHERE ID = (SELECT Ident_current('Master.Version')))
+			SET @StartVersion = ((SELECT Ident_current('Master.Version')))
 
 			INSERT INTO Master.Warehouse(ProductsID,ConfigurationModelId,ReceivingDate,StartVersion,Price)
 			VALUES((SELECT Ident_current('master.Products')),(SELECT Ident_current('master.ConfigurationModels')),@Date,@StartVersion,@Price)
 
-			UPDATE Log.OperationRuns
-			SET EndTime = (SELECT GETDATE()),
-						   STATUS = 'Successfully'
-						   WHERE id = (SELECT Ident_current('Log.OperationRuns'))
+				 EXEC OperationRunsUpdate  @InsertedRows = 1
 
 							
 		  COMMIT TRAN			

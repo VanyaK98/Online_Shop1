@@ -29,10 +29,7 @@
 		  VALUES (@FirstName,@LastName,@Email,@Phone,@IdAddress)
 
 
-		  UPDATE Log.OperationRuns
-		  SET EndTime = (SELECT GETDATE()),
-						 STATUS = 'Successfully'
-						 WHERE id = (SELECT Ident_current('Log.OperationRuns'))
+		  	 EXEC OperationRunsUpdate  @InsertedRows = 1
 
              COMMIT TRAN
 			END TRY

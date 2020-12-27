@@ -35,6 +35,8 @@
 			 SET EndVersion = @EndVersion
 			 WHERE ProductsID IN (SELECT value FROM string_split(@ProductsId, ','))
 
+				 EXEC OperationRunsUpdate  @InsertedRows = 1
+
 				COMMIT TRAN
 		END TRY
 
