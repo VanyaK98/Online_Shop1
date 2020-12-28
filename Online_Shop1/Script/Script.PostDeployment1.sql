@@ -10,6 +10,11 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
+
+
+EXEC dbo.ConfigOn;
 Exec dbo.GN_Clients;
 EXEC dbo.GN_Products;
-EXEC dbo.GN_Orders
+EXEC dbo.GN_Orders;
+EXEC dbo.ConfigOff;
+

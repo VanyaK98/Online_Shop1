@@ -85,7 +85,6 @@
     <Build Include="Security\Master_5.sql" />
     <Build Include="Security\Staging_5.sql" />
     <Build Include="Procedures\dbo.OperationRuns.sql" />
-    <Build Include="Procedures\dbo.ErrorLog.sql" />
     <Build Include="Procedures\dbo.GN_Products.sql" />
     <Build Include="Procedures\dbo.GN_Clients.sql" />
     <Build Include="Procedures\dbo.GN_Orders.sql" />
@@ -96,6 +95,8 @@
     <Build Include="Procedures\dbo.OperationRunsUpdate.sql" />
     <Build Include="Procedures\dbo.Load_Products.sql" />
     <Build Include="Procedures\dbo.PriceChanges.sql" />
+    <Build Include="Procedures\dbo.ConfigOn.sql" />
+    <Build Include="Procedures\dbo.ConfigOff.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script\Script.PostDeployment1.sql" />
